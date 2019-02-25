@@ -10,7 +10,7 @@ use DateTime::Event::Sunrise;
 # use the following from command level to generate 
 # the position.data file if needed
 #
-# curl "https://maps.googleapis.com/maps/api/geocode/json?address=40891 Meadow Vista Place, Lovettsville VA 20180&key=AIzaSyBx-wqh745p_4Xz3TpzM2jp9baLZRL5TcE" > position.data
+# curl "https://maps.googleapis.com/maps/api/geocode/json?address=40891 Meadow Vista Place, Lovettsville VA 20180&key=<key>" > position.data
 
 my $filename = 'position.data';
 
