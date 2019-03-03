@@ -7,7 +7,7 @@ if ( isset($_REQUEST["dbg"]) && $_REQUEST["dbg"] != "" ) {
 }
 
 $pi = "";
-if ($_REQUEST ['pi']) {
+if ( isset($_REQUEST["pi"])  && $_REQUEST ["pi"] != "") {
 	$pi = $_REQUEST ["pi"];
 } else {
 	$pi = "10.0.1.25";
@@ -241,14 +241,14 @@ function deleteList() {
 </div>
 
 
-<div class="content">
+<div class="grid-container">
 
 		<?php
 			$i = 0;
 			// $y = count($images);
-			echo "<div class=\"panel\">\n";
-			for($x = 0; $x < count ( $images ); $x ++) {
 
+			for($x = 0; $x < count ( $images ); $x ++) {
+				// echo "<div class=\"panel\">\n";
 				$imgs = explode ( '/', $images [$x] );
 				$img = $imgs [4] . "/" . $imgs [5];
 				$img_icon = $imgs [4] . "/icon_" . $imgs [5];
