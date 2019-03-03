@@ -54,7 +54,8 @@ body {
   padding: 10px 16px;
   /* background: #555; */
 	color: #f1f1f1;
-	background: Grey;
+	background: LightBlue;
+	/* opacity: 0.9; */
 	/* opacity: 0.3; */
 }
 
@@ -65,7 +66,19 @@ body {
 .footer {
 	background: #42A5F5;
   color: white;
-  padding: 20px;
+	padding: 20px;
+	position: fixed;
+}
+
+.footer_test {
+   /* opacity: 0.9; */
+   position: fixed;
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   background-color: LightBlue;
+   color: white;
+	 text-align: center;
 }
 
 .sticky {
@@ -205,7 +218,7 @@ function deleteList() {
 </div>
 
 <div class="header" id="myHeader">
-	<h2>Images from </h2>
+	<b>Images from </b>
 	<form action="/myPics.php">
 		<select id="whichPi" name="pi">
 			<option value="10.0.1.25"
@@ -219,9 +232,11 @@ function deleteList() {
 					(inside #2)</option>
 			</select>
 
-			<input type="submit" value="Scan from this camera"> 
+			<input type="submit" value="Re-scan from this camera"> 
+			<!--
 			<input type="submit" onclick="deleteList()" value="Delete"> 
 			<input type="submit" onclick="saveList()" value="Save"> 
+			-->
 		</form>
 </div>
 
@@ -274,7 +289,7 @@ function deleteList() {
 
 </div>
 
-<div class="footer">
+<div class="footer_test">
 		<input type="submit" onclick="deleteList()" value="Delete"> 
 		<input type="submit" onclick="saveList()" value="Save"> 
 </div>
