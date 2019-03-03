@@ -2,10 +2,9 @@
 
 <?php
 $dbg = 'FALSE';
-if ($_REQUEST ['dbg']) {
+if ( isset($_REQUEST["dbg"]) && $_REQUEST["dbg"] != "" ) {
 	$dbg = $_REQUEST ['dbg'];
 }
-// echo "debug \"$dbg\"\n";
 
 $pi = "";
 if ($_REQUEST ['pi']) {
@@ -44,19 +43,29 @@ body {
 }
 
 .top-container {
-  background-color: #f1f1f1;
+	background: #42A5F5;
+	/* background-color: #2196F3; */
+  /* background-color: #f1f1f1; */
   padding: 10px;
   text-align: center;
 }
 
 .header {
   padding: 10px 16px;
-  background: #555;
-  color: #f1f1f1;
+  /* background: #555; */
+	color: #f1f1f1;
+	background: Grey;
+	/* opacity: 0.3; */
 }
 
 .content {
   padding: 10px;
+}
+
+.footer {
+	background: #42A5F5;
+  color: white;
+  padding: 20px;
 }
 
 .sticky {
@@ -98,11 +107,6 @@ function sleep(ms) {
 
 function saveImage(image) {
 
-	// if (image == undefined) {
-	// 	document.write("No image provided");
-	// 	return;
-	// }
-
 	// var processListStr = "";
 	var saveListStr = image;
 	document.write(image);
@@ -125,54 +129,54 @@ function saveImage(image) {
 
 function saveList() {
 
-	   // var processListStr = "";
-	   var saveListStr = "";
+	// var processListStr = "";
+	var saveListStr = "";
 		
-	   for (i=1; i<document.forms.length; i++) {
-	    	if (document.forms[i].elements[4].checked == true) {
+	for (i=1; i<document.forms.length; i++) {
+	  if (document.forms[i].elements[4].checked == true) {
 
-	        	mystr = document.forms[i].elements[1].value;
-	        	myarr = mystr.split("/");
-	        	if (saveListStr == "") {
-	            	saveListStr = myarr[5];
-	        	} else {
-	            	saveListStr += "," + myarr[5];
-	        	}
-	      	}
-	   }
-		
-	 	var myurl = "http://10.0.1.12/myPicsArrayPending.php";
-		var myargs = {
-			pi: <?php echo "\"$pi\"" ?>,
-			functionname:"save",
-			arguments: saveListStr
-		};
-		
-		$.ajax({
-			type: "post",
-			url: myurl,
-			data: myargs, 
-		});
-
+	    mystr = document.forms[i].elements[1].value;
+	    myarr = mystr.split("/");
+	    if (saveListStr == "") {
+	      saveListStr = myarr[5];
+	    } else {
+	      saveListStr += "," + myarr[5];
+	    }
+	  }
 	}
+		
+	var myurl = "http://10.0.1.12/myPicsArrayPending.php";
+	var myargs = {
+		pi: <?php echo "\"$pi\"" ?>,
+		functionname:"save",
+		arguments: saveListStr
+	};
+		
+	$.ajax({
+		type: "post",
+		url: myurl,
+		data: myargs, 
+	});
+
+}
 
 
 function deleteList() {
 
-   var deleteListStr = "";
+  var deleteListStr = "";
 	
-   for (i=1; i<document.forms.length; i++) {
-      if (document.forms[i].elements[3].checked == true) {
+  for (i=1; i<document.forms.length; i++) {
+  	if (document.forms[i].elements[3].checked == true) {
 
-         mystr = document.forms[i].elements[1].value;
-         myarr = mystr.split("/");
-         if (deleteListStr == "") {
-             deleteListStr = myarr[5];
-         } else {
-             deleteListStr += "," + myarr[5];
-         }
+    	mystr = document.forms[i].elements[1].value;
+      myarr = mystr.split("/");
+      if (deleteListStr == "") {
+      	deleteListStr = myarr[5];
+      } else {
+        deleteListStr += "," + myarr[5];
       }
-   }
+    }
+  }
 	
  	var myurl = "http://10.0.1.12/myPicsArrayPending.php";
 	var myargs = {
@@ -191,7 +195,6 @@ function deleteList() {
 }
 
 </script>
-
 
 </head>
 
@@ -223,7 +226,7 @@ function deleteList() {
 </div>
 
 
-	<div class="content">
+<div class="content">
 
 		<?php
 			$i = 0;
@@ -254,7 +257,7 @@ function deleteList() {
 				echo "<input type=\"hidden\" name=\"dbg\" value=\"$dbg\">";
 
 				echo "<p>";
-				echo " Delete: ";
+				echo "Delete: ";
 				echo "<input type=\"checkbox\" name=\"deleteId\" >";
 				echo " &nbsp; Save: ";
 				echo "<input type=\"checkbox\" name=\"saveId\" >";
@@ -269,16 +272,16 @@ function deleteList() {
 
 		?>
 
-	</div>
+</div>
 
-	<div class="grid-footer">
+<div class="footer">
 		<input type="submit" onclick="deleteList()" value="Delete"> 
 		<input type="submit" onclick="saveList()" value="Save"> 
-	</div>
+</div>
 
 
 
-	</div>
+</div>
 
 
 <script>

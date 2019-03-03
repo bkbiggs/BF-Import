@@ -1,21 +1,32 @@
 <?php
+function myLogger($myMessage, $level) {
+
+	$date = date("Y-m-d h:m:s");
+	$file = __FILE__;
+ 
+	// $message = "[{$date}] [{$file}] [{$level}] [{$myMessage}]".PHP_EOL;
+	$message = "[{$file}] [{$level}] [{$myMessage}]";
+	// log to our default location
+	error_log($message);
+}
+
 function copyFile($id, $host, $fn){
 
 	$v2 = 0;
 	$v3 = 0;
 	
 	$copyFile = "/usr/bin/scp ". $id . "@" . $host . ":$fn /var/www/html/share/images 2>&1";
-	echo "copy: " . $copyFile . "<br>\n";
-	echo exec( $copyFile, $v2, $v3);
+	myLogger ("copy: " . $copyFile, "info");
+	myLogger ("exec: " . exec( $copyFile, $v2, $v3), "info");
 	
 	if (count ( $v2 ) > 0) {
-		echo "$fn<br>\n";
-		echo "Return value: " . $v2[0] . "<br>\n";
+		myLogger ("v2: $fn", "warning");
+		myLogger ("v2: Return value: " . $v2[0], "warning" );
 	}
 	
 	if ($v3 != 0) {
-		echo "$fn<br>\n";
-		echo "Return code: " . $v3 . "<br>\n";
+		myLogger ("v3: $fn", "info");
+		myLogger ("v3: Return code: " . $v3, "warning" );
 	}
 	
 }
@@ -26,17 +37,17 @@ function deleteFile($id, $host, $fn) {
 	$v3 = 0;
 	
 	$rmFile = "/usr/bin/ssh " . $id . "@" . $host . " 'rm " . $fn . " &2>1'";
-	echo "del:  " . $rmFile . "<br>\n";
-	echo exec ( $rmFile, $v2, $v3 );
+	myLogger ("del:  " . $rmFile, "info");
+	myLogger ("exec: " . exec ( $rmFile, $v2, $v3 ), "info");
 	
 	if (count ( $v2 ) > 0) {
-		echo "$rmFile<br>\n";
-		echo "Return value: " . $v2[0] . "<br>\n";
+		myLogger ("v2: $rmFile", "warning");
+		myLogger ("v2: Return value: " . $v2[0], "warning" );
 	}
 	
 	if ($v3 != 0) {
-		echo "$rmFile<br>\n";
-		echo "Return code: " . $v3 . "<br>\n";
+		myLogger ("v3: $rmFile", "info");
+		myLogger ("v3: Return code: " . $v3, "warning" );
 	}
 	
 	
@@ -51,7 +62,6 @@ $id = "pi";
 
 // location on camera host to get the images from
 $newImageDir = "/home/pi/share/images";
-
 
 
 if (! isset ( $_REQUEST ['functionname'] )) {
@@ -71,10 +81,8 @@ echo "<br>\n";
 
 
 $dbg = "FALSE";
-if ($_REQUEST ["dbg"]) {
+if ( isset($_REQUEST["dbg"]) && $_REQUEST["dbg"] != "" ) {
 	$dbg = $_REQUEST ["dbg"];
-} else {
-	$dbg = "FALSE";
 }
 
 
@@ -136,6 +144,7 @@ for($i = 0; $i < count ( $fnaa ); $i ++) {
 		deleteFile($id, $cameraHost, $myicon);
 	}
 	
+
 	//
 	// copy the full image from the camera host to this host
 	//
