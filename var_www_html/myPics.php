@@ -20,6 +20,12 @@ ssh2_auth_password ( $connection, 'bftest', 'bftest' );
 
 $stream = ssh2_exec ( $connection, '/home/bftest/runme.sh' );
 
+stream_set_blocking ( $stream, true );
+$images = array ();
+while ($o = fgets( $stream )) {
+	$images [] = chop ( $o );
+}
+
 ?>
 
 <html lang="en">
@@ -29,47 +35,42 @@ $stream = ssh2_exec ( $connection, '/home/bftest/runme.sh' );
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" type="text/css" href="./myPics.css">
 	<title>myPics Selection</title>
-</head>
 
-<body>
-	<h1>Select to include in favorites</h1>
-	<p />
+	<style>
 
-<?php
-stream_set_blocking ( $stream, true );
-$images = array ();
-while ($o = fgets( $stream )) {
-	$images [] = chop ( $o );
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
 }
-?>
 
-Currently scanning images from <?php echo $pi; ?>
-	
-	<p />
-	
-	<form action="/myPics.php">
-		<select id="whichPi" name="pi">
-			<option value="10.0.1.25"
-				<?php if ($pi=='10.0.1.25') {echo("selected");}?>>Raspberry15
-				(outside)</option>
-			<option value="10.0.1.19"
-				<?php if ($pi=='10.0.1.19') {echo("selected");}?>>Raspberry9 (inside
-				#1)</option>
-			<option value="10.0.1.26"
-				<?php if ($pi=='10.0.1.26') {echo("selected");}?>>Raspberry16
-				(inside #2)</option>
-		</select>
+.top-container {
+  background-color: #f1f1f1;
+  padding: 10px;
+  text-align: center;
+}
 
-		<p />
-		<input type="submit" value="Scan from this camera"> 
-		<input type="submit" onclick="deleteList()" value="Delete"> 
-		<input type="submit" onclick="saveList()" value="Save"> 
-	</form>
+.header {
+  padding: 10px 16px;
+  background: #555;
+  color: #f1f1f1;
+}
 
-	<p />
+.content {
+  padding: 10px;
+}
 
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"/>
+.sticky + .content {
+  padding-top: 102px;
+}
+</style>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"/>
 
 
 <script>	
@@ -91,6 +92,36 @@ setSelectedIndex(document.getElementById("whichPi"), <?php echo "\"$pi\""?>);
 
 
 <script>
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function saveImage(image) {
+
+	// if (image == undefined) {
+	// 	document.write("No image provided");
+	// 	return;
+	// }
+
+	// var processListStr = "";
+	var saveListStr = image;
+	document.write(image);
+	sleep(10000);
+
+	var myurl = "http://10.0.1.12/myPicsArrayPending.php";
+	var myargs = {
+		pi: <?php echo "\"$pi\"" ?>,
+		functionname:"save",
+		arguments: saveListStr
+	};
+		 
+	$.ajax({
+		type: "post",
+		url: myurl,
+		data: myargs, 
+	});
+ 
+}
 
 function saveList() {
 
@@ -98,26 +129,17 @@ function saveList() {
 	   var saveListStr = "";
 		
 	   for (i=1; i<document.forms.length; i++) {
-	      if (document.forms[i].elements[4].checked == true) {
+	    	if (document.forms[i].elements[4].checked == true) {
 
-	         mystr = document.forms[i].elements[1].value;
-	         myarr = mystr.split("/");
-	         if (saveListStr == "") {
-	             saveListStr = myarr[5];
-	         } else {
-	             saveListStr += "," + myarr[5];
-	         }
-	      }
+	        	mystr = document.forms[i].elements[1].value;
+	        	myarr = mystr.split("/");
+	        	if (saveListStr == "") {
+	            	saveListStr = myarr[5];
+	        	} else {
+	            	saveListStr += "," + myarr[5];
+	        	}
+	      	}
 	   }
-
-
-		// build my request
-		// code: myPicsArrayPending.php
-		// host: $p1
-		// functionname: process
-		// arguments: list from saveListStr built just above
-		
-		// saveListStr = chr(34) + saveListStr + chr(34);
 		
 	 	var myurl = "http://10.0.1.12/myPicsArrayPending.php";
 		var myargs = {
@@ -125,14 +147,7 @@ function saveList() {
 			functionname:"save",
 			arguments: saveListStr
 		};
-
-		// basically a visual info point...
-// 		document.getElementById("demo1").innerHTML = 
-// 			"url: \"" + myurl + "\"<br>" +
-// 			"functionname: \"save\"<br>" +
-// 			"arguments: " + saveListStr + "<br>";
-
-			
+		
 		$.ajax({
 			type: "post",
 			url: myurl,
@@ -143,8 +158,6 @@ function saveList() {
 
 
 function deleteList() {
-
-//   var deleteListStr = "<p>Delete List<br>length = " + document.forms.length + "<br>";
 
    var deleteListStr = "";
 	
@@ -160,15 +173,6 @@ function deleteList() {
          }
       }
    }
-
-
-	// build my request
-	// code: myPicsArrayDelete.php
-	// host: $p1
-	// functionname: delete
-	// arguments: list from deleteListStr built just above
-	
-	// deleteListStr = chr(34) + deleteListStr + chr(34);
 	
  	var myurl = "http://10.0.1.12/myPicsArrayPending.php";
 	var myargs = {
@@ -176,13 +180,6 @@ function deleteList() {
 		functionname:"delete",
 		arguments: deleteListStr
 	};
-
-	// basically a visual info point...
-// 	document.getElementById("demo1").innerHTML = 
-// 		"url: \"" + myurl + "\"<br>" +
-// 		"functionname: \"delete\"<br>" +
-// 		"arguments: " + deleteListStr + "<br>";
-
 		
 	$.ajax({
 		type: "post",
@@ -193,58 +190,112 @@ function deleteList() {
 
 }
 
-
 </script>
 
 
-<!-- 	<p id="demo1">Delete List</p> -->
-<!-- 	<p /> -->
- 
-<!-- 	<p id="demo2">Save List</p> -->
-<!-- 	<p /> -->
+</head>
 
-	<div class="grid-container">
+<body>
 
-<?php
-$i = 0;
-// $y = count($images);
-for($x = 0; $x < count ( $images ); $x ++) {
-
-	$imgs = explode ( '/', $images [$x] );
-	$img = $imgs [4] . "/" . $imgs [5];
-	$img_icon = $imgs [4] . "/icon_" . $imgs [5];
-
-	$i ++;
-
-	echo "<div>";
-	echo "<figure>\n";
-	echo "<form id=\"myChoice\">\n";
-
-	echo "#" . $i . "<br>\n";
-
-	echo "<a href=\"http://" . $pi . "/" . $img . "\" target=\"_blank\">\n";
-	echo "<img src=\"http://" . $pi . "/" . $img_icon . "\" class=\"thumbnail\" width=\"256\" height=\"192\">\n";
-	echo "</a><br>";
-
-	echo "<figcaption style=\"font-size:18\">" . $imgs [5] . "</figcaption>";
-
-	echo "<input type=\"hidden\" name=\"pi\" value=\"" . $pi . "\">";
-	echo "<input type=\"hidden\" name=\"fn\" value=\"$images[$x]\">";
-	echo "<input type=\"hidden\" name=\"dbg\" value=\"$dbg\">";
-
-	echo "<p>";
-	echo " Delete: ";
-	echo "<input type=\"checkbox\" name=\"deleteId\" >";
-	echo " - Save: ";
-	echo "<input type=\"checkbox\" name=\"saveId\" >";
-
-	echo "</form>\n";
-	echo "</figure>\n";
-	echo "</div>\n";
-}
-?>
-
+<div class="top-container">
+  <h1>Bird Feeder - Import selection</h1>
 </div>
+
+<div class="header" id="myHeader">
+	<h2>Images from </h2>
+	<form action="/myPics.php">
+		<select id="whichPi" name="pi">
+			<option value="10.0.1.25"
+				<?php if ($pi=='10.0.1.25') {echo("selected");}?>>Raspberry15
+					(outside)</option>
+			<option value="10.0.1.19"
+				<?php if ($pi=='10.0.1.19') {echo("selected");}?>>Raspberry9 (inside
+					#1)</option>
+			<option value="10.0.1.26"
+				<?php if ($pi=='10.0.1.26') {echo("selected");}?>>Raspberry16
+					(inside #2)</option>
+			</select>
+
+			<input type="submit" value="Scan from this camera"> 
+			<input type="submit" onclick="deleteList()" value="Delete"> 
+			<input type="submit" onclick="saveList()" value="Save"> 
+		</form>
+</div>
+
+
+	<div class="content">
+
+		<?php
+			$i = 0;
+			// $y = count($images);
+			echo "<div class=\"panel\">\n";
+			for($x = 0; $x < count ( $images ); $x ++) {
+
+				$imgs = explode ( '/', $images [$x] );
+				$img = $imgs [4] . "/" . $imgs [5];
+				$img_icon = $imgs [4] . "/icon_" . $imgs [5];
+
+				$i ++;
+
+				echo "<div>";
+				echo "<figure>\n";
+				echo "<form id=\"myChoice\">\n";
+
+				echo "#" . $i . "<br>\n";
+
+				echo "<a href=\"http://" . $pi . "/" . $img . "\" target=\"_blank\">\n";
+				echo "<img src=\"http://" . $pi . "/" . $img_icon . "\" class=\"thumbnail\" width=\"256\" height=\"192\">\n";
+				echo "</a><br>";
+
+				echo "<figcaption style=\"font-size:18\">" . $imgs [5] . "</figcaption>";
+
+				echo "<input type=\"hidden\" name=\"pi\" value=\"" . $pi . "\">";
+				echo "<input type=\"hidden\" name=\"fn\" value=\"$images[$x]\">";
+				echo "<input type=\"hidden\" name=\"dbg\" value=\"$dbg\">";
+
+				echo "<p>";
+				echo " Delete: ";
+				echo "<input type=\"checkbox\" name=\"deleteId\" >";
+				echo " &nbsp; Save: ";
+				echo "<input type=\"checkbox\" name=\"saveId\" >";
+
+				// echo "<input type=\"submit\" onclick=\"deleteList()\" value=\"Delete\" >"; 
+				// echo "<input type=\"submit\" onclick=\"saveImage(" . $img . ")\" value=\"Save\"> "; 
+
+				echo "</form>\n";
+				echo "</figure>\n";
+				echo "</div>\n";
+			}
+
+		?>
+
+	</div>
+
+	<div class="grid-footer">
+		<input type="submit" onclick="deleteList()" value="Delete"> 
+		<input type="submit" onclick="saveList()" value="Save"> 
+	</div>
+
+
+
+	</div>
+
+
+<script>
+
+window.onscroll = function() {myFunction()};
+
+var header = document.getElementById("myHeader");
+var sticky = header.offsetTop;
+
+function myFunction() {
+  if (window.pageYOffset > sticky) {
+    header.classList.add("sticky");
+  } else {
+    header.classList.remove("sticky");
+  }
+}
+</script>
 
 
 

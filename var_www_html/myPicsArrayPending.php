@@ -73,8 +73,10 @@ echo "<br>\n";
 $dbg = "FALSE";
 if ($_REQUEST ["dbg"]) {
 	$dbg = $_REQUEST ["dbg"];
+} else {
+	$dbg = "FALSE";
 }
-// echo "debug =\"$dbg\"\n";
+
 
 // Which camera machine are we working on?
 if ($_REQUEST ["pi"]) {
