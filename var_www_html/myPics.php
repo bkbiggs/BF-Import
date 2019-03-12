@@ -30,9 +30,11 @@ while ($o = fgets( $stream )) {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" type="text/css" href="./myPics.css">
+<!--    <link rel="stylesheet" type="text/css" href="./myPics.css">-->
+		<link rel="stylesheet" href="css/bootstrap.min.css">
 	<title>myPics Selection</title>
 
 	<style>
@@ -46,7 +48,7 @@ body {
 	background: #42A5F5;
 	/* background-color: #2196F3; */
   /* background-color: #f1f1f1; */
-  padding: 10px;
+  padding: 30px;
   text-align: center;
 }
 
@@ -56,21 +58,15 @@ body {
 	color: #f1f1f1;
 	background: LightBlue;
 	/* opacity: 0.9; */
-	/* opacity: 0.3; */
+	opacity: 1.0;
 }
 
 .content {
   padding: 10px;
 }
 
+/** Footer **/
 .footer {
-	background: #42A5F5;
-  color: white;
-	padding: 20px;
-	position: fixed;
-}
-
-.footer_test {
    /* opacity: 0.9; */
    position: fixed;
    left: 0;
@@ -82,17 +78,19 @@ body {
 }
 
 .sticky {
-  position: fixed;
+  position: sticky;
   top: 0;
   width: 100%;
+	z-index: +1;
 }
 
 .sticky + .content {
-  padding-top: 102px;
+	padding-top: 0px;
 }
 </style>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"/>
+
 
 
 <script>	
@@ -145,11 +143,16 @@ function saveList() {
 	// var processListStr = "";
 	var saveListStr = "";
 		
+		console.log("document.forms.length=");
+		console.log(document.forms.length);
+
 	for (i=1; i<document.forms.length; i++) {
 	  if (document.forms[i].elements[4].checked == true) {
 
 	    mystr = document.forms[i].elements[1].value;
 	    myarr = mystr.split("/");
+			console.log("myarr[5]=");
+			console.log(myarr[5]);
 	    if (saveListStr == "") {
 	      saveListStr = myarr[5];
 	    } else {
@@ -213,6 +216,7 @@ function deleteList() {
 
 <body>
 
+
 <div class="top-container">
   <h1>Bird Feeder - Import selection</h1>
 </div>
@@ -233,79 +237,95 @@ function deleteList() {
 			</select>
 
 			<input type="submit" value="Re-scan from this camera"> 
+
 			<!--
 			<input type="submit" onclick="deleteList()" value="Delete"> 
 			<input type="submit" onclick="saveList()" value="Save"> 
 			-->
+
 		</form>
 </div>
 
 
-<div class="grid-container">
+<div class="image content container">
+<div class="row">
 
-		<?php
+<!-- 
+The Rules of the Grid:
+1. Columns must be the immediate child of a Row.
+2. Rows are only used to contain Columns, nothing else.
+3. Rows should be placed inside a Container.
+
+Those rules are very IMPORTANT. The Rows & Columns always work together, and you should never have one without the other.
+
+Bad stuff will happen if you don’t follow those 3 simple Grid rules, exactly. I’ve answered countless Bootstrap questions on Stack Overflow by simply applying those rules. At first this might sound complicated, but it’s really easy once you understand how the Grid works.
+-->
+
+<?php
 			$i = 0;
 			// $y = count($images);
 
 			for($x = 0; $x < count ( $images ); $x ++) {
-				// echo "<div class=\"panel\">\n";
+
 				$imgs = explode ( '/', $images [$x] );
 				$img = $imgs [4] . "/" . $imgs [5];
 				$img_icon = $imgs [4] . "/icon_" . $imgs [5];
 
 				$i ++;
 
-				echo "<div>";
-				echo "<figure>\n";
-				echo "<form id=\"myChoice\">\n";
+				echo "<section class=\"col-sm-6 col-md-6 col-lg-4 col-xl-3\">\n";
+				echo "<form id=\"myChoice\" style=\"text-align:center;\">\n";
 
 				echo "#" . $i . "<br>\n";
 
 				echo "<a href=\"http://" . $pi . "/" . $img . "\" target=\"_blank\">\n";
 				echo "<img src=\"http://" . $pi . "/" . $img_icon . "\" class=\"thumbnail\" width=\"256\" height=\"192\">\n";
-				echo "</a><br>";
+				echo "</a><br>\n";
 
-				echo "<figcaption style=\"font-size:18\">" . $imgs [5] . "</figcaption>";
+				echo "<div style=\"font-size:18;\">" . $imgs [5] . "</div>\n";
 
-				echo "<input type=\"hidden\" name=\"pi\" value=\"" . $pi . "\">";
-				echo "<input type=\"hidden\" name=\"fn\" value=\"$images[$x]\">";
-				echo "<input type=\"hidden\" name=\"dbg\" value=\"$dbg\">";
+				echo "<input type=\"hidden\" name=\"pi\" value=\"" . $pi . "\">\n";
+				echo "<input type=\"hidden\" name=\"fn\" value=\"$images[$x]\">\n";
+				echo "<input type=\"hidden\" name=\"dbg\" value=\"$dbg\">\n";
 
 				echo "<p>";
 				echo "Delete: ";
 				echo "<input type=\"checkbox\" name=\"deleteId\" >";
 				echo " &nbsp; Save: ";
-				echo "<input type=\"checkbox\" name=\"saveId\" >";
-
-				// echo "<input type=\"submit\" onclick=\"deleteList()\" value=\"Delete\" >"; 
-				// echo "<input type=\"submit\" onclick=\"saveImage(" . $img . ")\" value=\"Save\"> "; 
+				echo "<input type=\"checkbox\" name=\"saveId\" ></p>\n";
 
 				echo "</form>\n";
-				echo "</figure>\n";
-				echo "</div>\n";
+				// echo "</figure>\n";
+				echo "</section>\n";
 			}
 
 		?>
 
+
+</div>
 </div>
 
-<div class="footer_test">
+
+<div class="footer">
 		<input type="submit" onclick="deleteList()" value="Delete"> 
 		<input type="submit" onclick="saveList()" value="Save"> 
 </div>
 
 
-
 </div>
-
 
 <script>
 
+// When the user scrolls the page, execute myFunction 
 window.onscroll = function() {myFunction()};
 
+// Get the header
 var header = document.getElementById("myHeader");
+
+// Get the offset position of the navbar
 var sticky = header.offsetTop;
 
+// Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
 function myFunction() {
   if (window.pageYOffset > sticky) {
     header.classList.add("sticky");
@@ -313,7 +333,10 @@ function myFunction() {
     header.classList.remove("sticky");
   }
 }
+
 </script>
+
+
 
 
 

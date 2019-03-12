@@ -1,32 +1,24 @@
 <?php
-function myLogger($myMessage, $level) {
-
-	$date = date("Y-m-d h:m:s");
-	$file = __FILE__;
- 
-	// $message = "[{$date}] [{$file}] [{$level}] [{$myMessage}]".PHP_EOL;
-	$message = "[{$file}] [{$level}] [{$myMessage}]";
-	// log to our default location
-	error_log($message);
-}
-
 function copyFile($id, $host, $fn){
 
 	$v2 = 0;
 	$v3 = 0;
 	
 	$copyFile = "/usr/bin/scp ". $id . "@" . $host . ":$fn /var/www/html/share/images 2>&1";
-	myLogger ("copy: " . $copyFile, "info");
-	myLogger ("exec: " . exec( $copyFile, $v2, $v3), "info");
+	echo "<!-- copy: " . $copyFile . "<br> ";
+	echo exec( $copyFile, $v2, $v3);
+	echo "--> ";
 	
 	if (count ( $v2 ) > 0) {
-		myLogger ("v2: $fn", "warning");
-		myLogger ("v2: Return value: " . $v2[0], "warning" );
+		echo "<!-- $fn<br> ";
+		echo "Return value: " . $v2[0] . "<br> ";
+		echo "--> ";
 	}
 	
 	if ($v3 != 0) {
-		myLogger ("v3: $fn", "info");
-		myLogger ("v3: Return code: " . $v3, "warning" );
+		echo "<!-- $fn<br> ";
+		echo "Return code: " . $v3 . "<br> ";
+		echo "--> ";
 	}
 	
 }
@@ -37,21 +29,29 @@ function deleteFile($id, $host, $fn) {
 	$v3 = 0;
 	
 	$rmFile = "/usr/bin/ssh " . $id . "@" . $host . " 'rm " . $fn . " &2>1'";
-	myLogger ("del:  " . $rmFile, "info");
-	myLogger ("exec: " . exec ( $rmFile, $v2, $v3 ), "info");
-	
+	echo "<!-- del:  " . $rmFile . "<br> ";
+	echo exec ( $rmFile, $v2, $v3 );
+	echo "--> ";
+
 	if (count ( $v2 ) > 0) {
-		myLogger ("v2: $rmFile", "warning");
-		myLogger ("v2: Return value: " . $v2[0], "warning" );
+		echo "<!-- $rmFile<br> ";
+		echo "count(\$v2)=".count($v2)." ";
+		echo "Return value: " . $v2[0] . "<br> ";
+		echo "--> ";
 	}
 	
 	if ($v3 != 0) {
-		myLogger ("v3: $rmFile", "info");
-		myLogger ("v3: Return code: " . $v3, "warning" );
+		echo "<!-- $rmFile<br> ";
+		echo "Return code: " . $v3 . "<br> ";
+		echo "--> ";
 	}
 	
 	
 }
+
+
+echo "<html> ";
+echo "    <body> ";
 
 // header ( 'Content-Type: application/json' );
 
@@ -64,6 +64,7 @@ $id = "pi";
 $newImageDir = "/home/pi/share/images";
 
 
+
 if (! isset ( $_REQUEST ['functionname'] )) {
 	$aResult ['error'] = 'No function name!';
 }
@@ -72,9 +73,10 @@ if (! isset ( $_REQUEST ['arguments'] )) {
 	$aResult ['error'] = 'No function arguments!';
 }
 
-echo "encode function: ";
+echo "<!-- encode function: ";
 echo json_encode ( $aResult );
-echo "<br>\n";
+echo "<br> ";
+echo "--> ";
 
 //
 //
@@ -84,7 +86,8 @@ $dbg = "FALSE";
 if ( isset($_REQUEST["dbg"]) && $_REQUEST["dbg"] != "" ) {
 	$dbg = $_REQUEST ["dbg"];
 }
-
+echo "<!-- debug =\"$dbg\" ";
+echo "--> ";
 
 // Which camera machine are we working on?
 if ($_REQUEST ["pi"]) {
@@ -119,7 +122,7 @@ for($i = 0; $i < count ( $fnaa ); $i ++) {
 	$fn = $fnaa [$i];
 	
 	if ($fn == "") {
-		echo "No file specified.<br>\n";
+		echo "No file specified.<br> ";
 		break;
 	}
 	
@@ -144,7 +147,6 @@ for($i = 0; $i < count ( $fnaa ); $i ++) {
 		deleteFile($id, $cameraHost, $myicon);
 	}
 	
-
 	//
 	// copy the full image from the camera host to this host
 	//
@@ -162,21 +164,22 @@ for($i = 0; $i < count ( $fnaa ); $i ++) {
 	
 }
 
-$n = 10;
+$n = 5;
 if ($dbg == true) {
 	$n = 10000;
 }
 ;
 
-echo "<html>\n";
-echo "    <body>\n";
-echo "    <p>Saved!</p>\n";
-echo "    <script>\n";
-echo "        var timer = setTimeout(function() {\n";
-echo "            window.location='http://10.0.1.12/myPics.php?pi=$cameraHost&dbg=$dbg'\n";
-echo "        }, $n);\n";
-echo "    </script>\n";
-echo "</body>\n";
-echo "</html>\n";
+
+// echo "<html> ";
+// echo "    <body> ";
+echo "    <p>$functionname</p> ";
+echo "    <script> ";
+echo "        var timer = setTimeout(function() { ";
+echo "            window.location='http://10.0.1.12/myPics.php?pi=$cameraHost&dbg=$dbg' ";
+echo "        }, $n); ";
+echo "    </script> ";
+echo "</body> ";
+echo "</html> ";
 
 
