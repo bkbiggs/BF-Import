@@ -5,20 +5,20 @@ function copyFile($id, $host, $fn){
 	$v3 = 0;
 	
 	$copyFile = "/usr/bin/scp ". $id . "@" . $host . ":$fn /var/www/html/share/images 2>&1";
-	echo "<!-- copy: " . $copyFile . "<br> ";
+	echo "<!-- copy: " . $copyFile . "\n";
 	echo exec( $copyFile, $v2, $v3);
-	echo "--> ";
+	echo "-->\n";
 	
 	if (count ( $v2 ) > 0) {
-		echo "<!-- $fn<br> ";
-		echo "Return value: " . $v2[0] . "<br> ";
-		echo "--> ";
+		echo "<!-- $fn\n";
+		echo "Return value: " . $v2[0] . "\n";
+		echo "-->\n";
 	}
 	
 	if ($v3 != 0) {
-		echo "<!-- $fn<br> ";
-		echo "Return code: " . $v3 . "<br> ";
-		echo "--> ";
+		echo "<!-- $fn\n";
+		echo "Return code: " . $v3 . "\n";
+		echo "-->\n";
 	}
 	
 }
@@ -29,29 +29,29 @@ function deleteFile($id, $host, $fn) {
 	$v3 = 0;
 	
 	$rmFile = "/usr/bin/ssh " . $id . "@" . $host . " 'rm " . $fn . " &2>1'";
-	echo "<!-- del:  " . $rmFile . "<br> ";
+	echo "<!-- del:  " . $rmFile . "\n";
 	echo exec ( $rmFile, $v2, $v3 );
-	echo "--> ";
+	echo "-->\n";
 
 	if (count ( $v2 ) > 0) {
-		echo "<!-- $rmFile<br> ";
-		echo "count(\$v2)=".count($v2)." ";
-		echo "Return value: " . $v2[0] . "<br> ";
-		echo "--> ";
+		echo "<!-- $rmFile<br>\n";
+		echo "count(\$v2)=".count($v2)."\n";
+		echo "Return value: " . $v2[0] . "\n";
+		echo "-->\n";
 	}
 	
 	if ($v3 != 0) {
-		echo "<!-- $rmFile<br> ";
-		echo "Return code: " . $v3 . "<br> ";
-		echo "--> ";
+		echo "<!-- $rmFile\n";
+		echo "Return code: " . $v3 . "\n";
+		echo "-->\n";
 	}
 	
 	
 }
 
 
-echo "<html> ";
-echo "    <body> ";
+echo "<html>\n";
+echo "    <body>\n";
 
 // header ( 'Content-Type: application/json' );
 
@@ -75,8 +75,8 @@ if (! isset ( $_REQUEST ['arguments'] )) {
 
 echo "<!-- encode function: ";
 echo json_encode ( $aResult );
-echo "<br> ";
-echo "--> ";
+echo "\n";
+echo "-->\n";
 
 //
 //
@@ -86,8 +86,8 @@ $dbg = "FALSE";
 if ( isset($_REQUEST["dbg"]) && $_REQUEST["dbg"] != "" ) {
 	$dbg = $_REQUEST ["dbg"];
 }
-echo "<!-- debug =\"$dbg\" ";
-echo "--> ";
+echo "<!-- debug =\"$dbg\"\n";
+echo "-->\n";
 
 // Which camera machine are we working on?
 if ($_REQUEST ["pi"]) {
@@ -122,7 +122,7 @@ for($i = 0; $i < count ( $fnaa ); $i ++) {
 	$fn = $fnaa [$i];
 	
 	if ($fn == "") {
-		echo "No file specified.<br> ";
+		echo "No file specified.\n";
 		break;
 	}
 	
@@ -173,13 +173,13 @@ if ($dbg == true) {
 
 // echo "<html> ";
 // echo "    <body> ";
-echo "    <p>$functionname</p> ";
-echo "    <script> ";
-echo "        var timer = setTimeout(function() { ";
-echo "            window.location='http://10.0.1.12/myPics.php?pi=$cameraHost&dbg=$dbg' ";
-echo "        }, $n); ";
-echo "    </script> ";
-echo "</body> ";
-echo "</html> ";
+echo "    <p>$functionname</p>\n";
+echo "    <script>\n";
+echo "        var timer = setTimeout(function() {\n";
+echo "            window.location='http://10.0.1.12/myPics.php?pi=$cameraHost&dbg=$dbg'\n";
+echo "        }, $n);\n";
+echo "    </script>\n";
+echo "</body>\n";
+echo "</html>\n";
 
 

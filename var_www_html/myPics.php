@@ -247,7 +247,7 @@ function deleteList() {
 </div>
 
 
-<div class="image content container">
+<div class="image content container" style="padding-bottom:40px;">
 <div class="row">
 
 <!-- 
@@ -305,10 +305,30 @@ Bad stuff will happen if you don’t follow those 3 simple Grid rules, exactly. 
 </div>
 </div>
 
+<style>
+.btn {
+  border: none;
+	width: 45%;
+  background-color: inherit;
+  <!-- padding: 14px 28px; -->
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-block;
+}
 
+/* Blue */
+.info {
+  color: dodgerblue;
+}
+
+.info:hover {
+  background: #2196F3;
+  color: white;
+}
+</style>
 <div class="footer">
-		<input type="submit" onclick="deleteList()" value="Delete"> 
-		<input type="submit" onclick="saveList()" value="Save"> 
+		<button class="btn info" onclick="deleteList()">Delete</button> 
+		<button class="btn info" onclick="saveList()">Save</button> 
 </div>
 
 
